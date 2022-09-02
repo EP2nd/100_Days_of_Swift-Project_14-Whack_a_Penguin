@@ -82,11 +82,23 @@ class GameScene: SKScene {
                 
                 run(SKAction.playSoundFileNamed("whackBad.caf", waitForCompletion: false))
             } else if node.name == "charEnemy" {
+                if let smokeParticles = SKEmitterNode(fileNamed: "whackedHard") {
+                    smokeParticles.position = touch.location(in: self)
+                    addChild(smokeParticles)
+                }
+                
                 whackSlot.charNode.xScale = 0.85
                 whackSlot.charNode.yScale = 0.85
                 score += 1
                 
                 run(SKAction.playSoundFileNamed("whack.caf", waitForCompletion: false))
+            }
+        }
+        
+        for node in tappedNodes {
+            if node.name == "playAgain" {
+                restart()
+                return
             }
         }
     }
@@ -107,9 +119,26 @@ class GameScene: SKScene {
             }
             
             let gameOver = SKSpriteNode(imageNamed: "gameOver")
+            gameOver.name = "gameOver"
             gameOver.position = CGPoint(x: 512, y: 384)
             gameOver.zPosition = 1
             addChild(gameOver)
+            
+            let finalScore = SKLabelNode(fontNamed: "Chalkduster")
+            finalScore.name = "finalScore"
+            finalScore.text = "Your score: \(score)"
+            finalScore.position = CGPoint(x: 512, y: 310)
+            finalScore.zPosition = 1
+            addChild(finalScore)
+            
+            let playAgain = SKLabelNode(fontNamed: "Futura-CondensedExtraBold")
+            playAgain.name = "playAgain"
+            playAgain.text = "Play again!"
+            playAgain.position = CGPoint(x: 512, y: 266)
+            playAgain.zPosition = 1
+            addChild(playAgain)
+            
+            run(SKAction.playSoundFileNamed("gameOver.m4a", waitForCompletion: false))
             
             return
         }
@@ -129,6 +158,23 @@ class GameScene: SKScene {
         let delay = Double.random(in: minDelay...maxDelay)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            self?.createEnemy()
+        }
+    }
+    
+    func restart() {
+        //removeAllChildren()
+        for child in children {
+            if child.name == "gameOver" || child.name == "finalScore" || child.name == "playAgain" {
+                removeChildren(in: [child])
+            }
+        }
+        
+        popupTime = 0.85
+        score = 0
+        numRounds = 0
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.createEnemy()
         }
     }

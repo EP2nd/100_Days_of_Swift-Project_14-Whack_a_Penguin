@@ -38,7 +38,13 @@ class WhackSlot: SKNode {
         
         charNode.xScale = 1
         charNode.yScale = 1
-        charNode.run(SKAction.moveBy(x: 0, y: 80, duration: 0.05))
+        charNode.run(SKAction.moveBy(x: 0, y: 80, duration: 0.2))
+        
+        if let mudLikeParticles = SKEmitterNode(fileNamed: "emerged") {
+            let sprite = SKSpriteNode(imageNamed: "whackHole")
+            mudLikeParticles.position = sprite.position
+            addChild(mudLikeParticles)
+        }
         
         isVisible = true
         isHit = false
@@ -59,7 +65,7 @@ class WhackSlot: SKNode {
     func hide() {
         if !isVisible { return }
         
-        charNode.run(SKAction.moveBy(x: 0, y: -80, duration: 0.05))
+        charNode.run(SKAction.moveBy(x: 0, y: -80, duration: 0.2))
         isVisible = false
     }
     
